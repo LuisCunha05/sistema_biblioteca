@@ -153,9 +153,6 @@ class UsuarioBuilder():
         
         return self._usuario
 
-Usuario.__name__ = 'Usuario'
-UsuarioBuilder.__name__ = 'UsuarioBuilder'
-
 if __name__ == "__main__":
     aa = (UsuarioBuilder()
             .addId(3)
