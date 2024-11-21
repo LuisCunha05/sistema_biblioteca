@@ -1,12 +1,9 @@
-from __future__ import annotations
-from typing import Literal
 from ..model.livro import Livro, LivroBuilder
 from ..model.usuario import Usuario, UsuarioBuilder
 
 __all__ = ['Biblioteca']
 
 class Biblioteca:
-    Acervo: list[Livro] = []
 
     @staticmethod
     def cadastrar(livro: Livro) -> bool:

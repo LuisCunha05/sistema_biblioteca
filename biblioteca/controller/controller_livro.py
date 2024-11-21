@@ -2,6 +2,7 @@ __all__ = ['ControllerLivro']
 from ..model.database import DB
 from ..model.livro import Livro, LivroBuilder
 from ..model.usuario import Usuario, UsuarioBuilder
+from ..util import unpackValue
 
 class ControllerLivro:
     @staticmethod
@@ -13,6 +14,7 @@ class ControllerLivro:
             id_livro,titulo,autor,genero,status,isbn_ = db.f_one()
 
             return (LivroBuilder()
+                            .addId(id_livro)
                             .addTitulo(titulo)
                             .addAutor(autor)
                             .addGenero(genero)
@@ -42,11 +44,13 @@ class ControllerLivro:
 
         try:
             db = DB()
-            id_livro = ControllerLivro.getIdLivro(db, isbn)
-
-            if(not id_livro):
-                print(f'Livro com Isbn: {isbn}, já foi adicionado!')
+            db.exec(novo.getIdQuery(), (novo.getIsbn(),))
+            try:
+                id_livro = unpackValue(db.f_one())
+                print(f'Livro com Isbn: {novo.getIsbn()}, já foi adicionado!')
                 return False
+            except ValueError:
+                pass
 
             db.exec(query=novo.createQuery(), args=novo.getAsDB())
             db.commit()
@@ -62,12 +66,14 @@ class ControllerLivro:
 
         try:
             db = DB()
-            id_livro = ControllerLivro.getIdLivro(db, livro)
-
-            if(id_livro):
+            db.exec(livro.getIdQuery(), (livro.getIsbn(),))
+            try:
+                id_livro = unpackValue(db.f_one())
                 print(f'Livro com Isbn: {livro.getIsbn()}, já foi adicionado!')
                 return False
-
+            except ValueError:
+                pass
+            
             db.exec(query=livro.createQuery(), args=livro.getAsDB())
             db.commit()
             db.close()
@@ -80,9 +86,10 @@ class ControllerLivro:
     def alterarLivro(livro: Livro, titulo: str = None, autor: str = None, genero: str = None, status: int = None) -> bool:
         try:
             db = DB()
-            id_livro = ControllerLivro.getIdLivro(db, livro)
-
-            if(not id_livro):
+            db.exec(livro.getIdQuery(), (livro.getIsbn(),))
+            try:
+                id_livro = unpackValue(db.f_one())
+            except ValueError:
                 print(f'Livro com Isbn: {livro.getIsbn()}, não foi encontrado!')
                 return False
 
@@ -96,7 +103,7 @@ class ControllerLivro:
                 arg.append(genero)
             if(status):
                 arg.append(status)
-            arg.append(livro.getIsbn())
+            arg.append(livro.getId())
             arg = tuple(arg)
 
             db.exec(query=livro.updateQuery(titulo=titulo, autor=autor, genero=genero, status=status), args=arg)
@@ -106,22 +113,3 @@ class ControllerLivro:
         except Exception as e:
             print(f'Erro ao connectar ao banco de dados: {e}')
             return False
-    
-    @staticmethod
-    def getIdLivro(database:DB, livro: Livro | str) -> int:
-        """Retorna o id do livro caso exista, Raises ValueError se livro não exister no banco de dados"""
-
-        if(isinstance(livro, Livro)):
-            database.exec(livro.getIdQuery(), (livro.getIsbn(),))
-        elif(type(livro) == str):
-            database.exec('select id_livro from livro where isbn=%s', (livro,))
-        else:
-            raise TypeError('Livro não corresponde a um tipo válido')
-
-        id_livro = database.f_one()
-
-        if(not id_livro):
-            raise ValueError('Livro inexistente')
-
-        id_livro = id_livro[0]
-        return id_livro

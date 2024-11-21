@@ -81,6 +81,7 @@ class Livro:
 
     @staticmethod
     def createQuery() -> str:
+        """Adiciona um novo livro ao banco de dados"""
         return """
                 insert into livro
                     (titulo, autor, genero, isbn, status_livro)
@@ -118,6 +119,7 @@ class Livro:
 
     @staticmethod
     def deleteQuery() -> str:
+        """Remove livro do banco. Input: id_livro: int"""
         return 'delete from livro where id_livro=%s'
     
     @staticmethod
@@ -146,10 +148,12 @@ class Livro:
     
     @staticmethod
     def getIdQuery() -> str:
+        """Retorna ID do livro apartir do ISBN"""
         return 'select id_livro from livro where isbn=%s'
     
     @staticmethod
     def setEmprestadoQuery() -> str:
+        """Altera status_livro para emprestado. Input: id_livro: int"""
         return 'update livro set status_livro=2 where id_livro=%s'
 
     def __str__(self) -> str:
@@ -187,8 +191,6 @@ class LivroBuilder:
         return self
 
     def build(self):
-        if(self._livro.getId() is None):
-            raise ValueError('ID não pode ser nulo')
         if(self._livro.getTitulo() == ''):
             raise ValueError('O atributo Titulo não pode ser vazio')
         if(self._livro.getAutor() == ''):

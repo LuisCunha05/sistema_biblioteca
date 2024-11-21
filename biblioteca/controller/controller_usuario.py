@@ -1,24 +1,21 @@
 __all__ = ['ControllerUsuario']
-from biblioteca.model.database import DB
-from biblioteca.model.usuario import Usuario, UsuarioBuilder
+from ..model.database import DB
+from ..model.usuario import Usuario, UsuarioBuilder
 
 class ControllerUsuario:
 
     @staticmethod
-    def getIdUsuario(database: DB ,usuario: Usuario | str):
-        """Retorna o id do livro caso exista, Raises ValueError se livro não exister no banco de dados"""
+    def instanceFromDB(cpf: str) -> Usuario:
+        try:
+            db = DB()
+            db.exec(Usuario.selectQuery(cpf=True), (cpf,))
 
-        if(isinstance(usuario, Usuario)):
-            database.exec(usuario.getIdUsuario(), (usuario.cpf,))
-        elif(type(usuario) == str):
-            database.exec('select id_usuario from usuario where cpf=%s', (usuario,))
-        else:
-            raise TypeError('Usuario não corresponde a um tipo válido')
+            result = db.f_one()
+            if(result is None):
+                print(f'Usuário com cpf: {cpf}, não existe')
+                return False
+            id_usuario, nome,email,cpf = result
 
-        id_livro = database.f_one()
 
-        if(not id_livro):
-            raise ValueError('Livro inexistente')
-
-        id_livro = id_livro[0]
-        return id_livro
+        except Exception as e:
+            print(f'Erro ao criar instância de usuário através do banco de dados:\nErro:{e}')

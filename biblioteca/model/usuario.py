@@ -66,22 +66,25 @@ class Usuario:
         return 'insert into usuario(nome,cpf,senha,email) values (%s,%s,%s,%s)'
     
     @staticmethod
-    def selectQuery(nome:bool|None = False, email:bool|None = False, id_usuario:bool|None = False) -> str:
+    def selectQuery(id_usuario:bool|None = False, nome:bool|None = False, email:bool|None = False,  cpf:bool|None = False) -> str:
         """
-        Gera o query para ler os usuarios, aplicando os filtros dados pelos argumentos verdadeiros no método.
+        Gera o query para ler o usuario, aplicando os filtros dados pelos argumentos verdadeiros no método.
         Example:
-            select * from usuario where nome=%s and email=%s and id_usuario=%s
+            select * from usuario where id_usuario=%s and nome=%s and email=%s and cpf=%s
         """
 
         query = 'select * from usuario'
         columns:list[str] = []
 
+        if(id_usuario):
+            columns.append('id_usuario=%s')
         if(nome):
             columns.append('nome=%s')
         if(email):
             columns.append('email=%s')
-        if(id_usuario):
-            columns.append('id_usuario=%s')
+        if(cpf):
+            columns.append('cpf=%s')
+        
 
         if(len(columns) != 0):
             query += ' where ' + ' and '.join(columns)
