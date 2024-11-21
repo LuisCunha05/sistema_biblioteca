@@ -76,7 +76,7 @@ class Livro:
     def getStatus(self) -> int:
         return self._status
 
-    def getAsDb(self) -> tuple:
+    def getAsDB(self) -> tuple:
         return (self._titulo, self._autor, self._genero, self._isbn, self._status)
 
     @staticmethod

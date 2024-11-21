@@ -1,4 +1,4 @@
--- Active: 1730375618989@@10.28.2.34@3306@biblioteca
+-- Active: 1725663609565@@127.0.0.1@3306@biblioteca
 
 use biblioteca;
 
@@ -48,9 +48,16 @@ INSERT INTO usuario (nome, cpf, senha, email) VALUES
 ('Carlos Pereira', '555.666.777-88', '12345', 'carlos@email.com'),
 ('Fernanda Costa', '222.333.444-99', '12345', 'fernanda@email.com');
 
-INSERT INTO emprestimo (id_livro,id_usuario,devolvido) VALUES (1, 2, FALSE);
-INSERT INTO emprestimo (id_livro,id_usuario,devolvido) VALUES (3, 1, FALSE);
+INSERT INTO emprestimo (id_livro,id_usuario,devolvido) VALUES
+    (1, 2, FALSE),
+    (3, 1, TRUE),
+    (1, 4, FALSE),
+    (2, 3, TRUE),
+    (3, 2, FALSE),
+    (2, 1, TRUE),
+    (1, 4, TRUE);
 
-INSERT INTO emprestimo (id_livro,id_usuario,devolvido) VALUES (3, 4, FALSE);
-
+-- select id_livro from emprestimo where id_usuario=2 and devolvido=false order by id_emprestimo desc;
 -- select * from emprestimo where id_livro=3 order by id_emprestimo desc;
+
+select count(*) from emprestimo where id_livro=2 and devolvido=false order by id_emprestimo desc;

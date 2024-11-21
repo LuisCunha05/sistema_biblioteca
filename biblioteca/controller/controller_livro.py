@@ -1,7 +1,7 @@
 __all__ = ['ControllerLivro']
-from biblioteca.model.database import DB
-from biblioteca.model.livro import Livro, LivroBuilder
-from biblioteca.model.usuario import Usuario, UsuarioBuilder
+from ..model.database import DB
+from ..model.livro import Livro, LivroBuilder
+from ..model.usuario import Usuario, UsuarioBuilder
 
 class ControllerLivro:
     @staticmethod
@@ -10,30 +10,30 @@ class ControllerLivro:
             db = DB()
 
             db.exec(Livro.selectQuery(isbn=True), (isbn,))
-            data = db.f_one()
+            id_livro,titulo,autor,genero,status,isbn_ = db.f_one()
 
             return (LivroBuilder()
-                            .addTitulo(data[0])
-                            .addAutor(data[1])
-                            .addGenero(data[2])
-                            .addIsbn(data[3])
-                            .addStatus(data[4])
+                            .addTitulo(titulo)
+                            .addAutor(autor)
+                            .addGenero(genero)
+                            .addStatus(status)
+                            .addIsbn(isbn_)
                             .build()
                         )
         except Exception as e:
-            print(e)
+            print(f'Erro ao criar instância de livro através do banco de dados:\nErro:{e}')
 
     
     @staticmethod
     def adicionarLivro(titulo: str, autor: str, genero: str, isbn: str, status: int = 1) -> bool:
-        """Adiciona um novo livro ao banco de dados. Verifica primeiro se Isbn ja existe no banco e aborta caso sim. Retorna um Bool com status de sucesso da operação de adição"""
+        """Adiciona um novo livro ao banco de dados. Verifica primeiro se Isbn já existe no banco e aborta caso sim. Retorna um Bool com status de sucesso da operação de adição"""
         try:
             novo: Livro =(LivroBuilder()
                             .addTitulo(titulo)
                             .addAutor(autor)
                             .addGenero(genero)
-                            .addIsbn(isbn)
                             .addStatus(status)
+                            .addIsbn(isbn)
                             .build()
                         )
         except (ValueError, TypeError) as e:
@@ -48,15 +48,16 @@ class ControllerLivro:
                 print(f'Livro com Isbn: {isbn}, já foi adicionado!')
                 return False
 
-            db.exec(query=novo.createQuery(), args=novo.getAsDb())
+            db.exec(query=novo.createQuery(), args=novo.getAsDB())
             db.commit()
             db.close()
             return True
         except Exception as e:
             print(f'Erro ao connectar ao banco de dados: {e}')
+            return False
     
     @staticmethod
-    def adicionarLivroFromInstance(livro: Livro):
+    def adicionarLivroFromInstance(livro: Livro) -> bool:
         """Adiciona um novo livro ao banco de dados. Verifica primeiro se Isbn ja existe no banco e aborta caso sim. Retorna um Bool com status de sucesso da operação de adição"""
 
         try:
@@ -67,12 +68,13 @@ class ControllerLivro:
                 print(f'Livro com Isbn: {livro.getIsbn()}, já foi adicionado!')
                 return False
 
-            db.exec(query=livro.createQuery(), args=livro.getAsDb())
+            db.exec(query=livro.createQuery(), args=livro.getAsDB())
             db.commit()
             db.close()
             return True
         except Exception as e:
             print(f'Erro ao connectar ao banco de dados: {e}')
+            return False
     
     @staticmethod
     def alterarLivro(livro: Livro, titulo: str = None, autor: str = None, genero: str = None, status: int = None) -> bool:
@@ -100,44 +102,6 @@ class ControllerLivro:
             db.exec(query=livro.updateQuery(titulo=titulo, autor=autor, genero=genero, status=status), args=arg)
             db.commit()
             db.close()
-            return True
-        except Exception as e:
-            print(f'Erro ao connectar ao banco de dados: {e}')
-            return False
-
-    @staticmethod
-    def emprestarLivro(livro: Livro, id_usuario: int):
-        # from usuario import Usuario
-        # usuario: Usuario = usuario
-        try:
-            db = DB()
-            id_livro = ControllerLivro.getIdLivro(db, livro)
-
-            db.exec('select devolvido from emprestimo where id_livro=%s and id_usuario=%s order by id_emprestimo desc' , (id_livro, id_usuario))
-
-            result = db.f_one()
-            if(result):
-                result = result[0]
-            else:
-                print('Erro: Usuário inexistente')
-                return False
-
-            if(not ControllerLivro.alterarLivro(livro=livro, id_usuario=id_usuario, status=2)):
-                print('')
-                return False
-
-            db.close()
-            return True
-        except Exception as e:
-            print(f'Erro ao connectar ao banco de dados: {e}')
-            return False
-
-    @staticmethod
-    def devolverLivro(livro: Livro):
-        try:
-            if(not ControllerLivro.alterarLivro(livro=livro, status=1)):
-                return False
-
             return True
         except Exception as e:
             print(f'Erro ao connectar ao banco de dados: {e}')

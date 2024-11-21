@@ -118,8 +118,15 @@ class Usuario:
     def getIdQuery(self) -> str:
         return 'select id_usuario from usuario where cpf=%s'
     
+    @staticmethod
+    def isAdministradorQuery():
+        return 'select id_administrador from administrador where id_usuario=%s'
+    
     def __str__(self) -> str:
         return f'ID: {self.getId()}, Nome: {self.getNome()}, Cpf: {self.getCpf()}, Email: {self.getEmail()}'
+    
+    def __repr__(self) -> str:
+        return f'Usuario({self.getId()},{self.getNome()},{self.getCpf()},{self.getEmail()})'
 
 class UsuarioBuilder():
     def __init__(self) -> None:
