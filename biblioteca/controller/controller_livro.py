@@ -13,15 +13,16 @@ class ControllerLivro:
             db.exec(Livro.selectQuery(isbn=True), (isbn,))
             id_livro,titulo,autor,genero,status,isbn_ = db.f_one()
 
-            return (LivroBuilder()
-                            .addId(id_livro)
-                            .addTitulo(titulo)
-                            .addAutor(autor)
-                            .addGenero(genero)
-                            .addStatus(status)
-                            .addIsbn(isbn_)
-                            .build()
-                        )
+            return (
+                LivroBuilder()
+                    .addId(id_livro)
+                    .addTitulo(titulo)
+                    .addAutor(autor)
+                    .addGenero(genero)
+                    .addStatus(status)
+                    .addIsbn(isbn_)
+                    .build()
+            )
         except Exception as e:
             print(f'Erro ao criar instância de livro através do banco de dados:\nErro:{e}')
 

@@ -70,10 +70,10 @@ class Usuario:
         """
         Gera o query para ler o usuario, aplicando os filtros dados pelos argumentos verdadeiros no método.
         Example:
-            select * from usuario where id_usuario=%s and nome=%s and email=%s and cpf=%s
+            select id_usuario,nome,cpf,email from usuario where id_usuario=%s and nome=%s and email=%s and cpf=%s
         """
 
-        query = 'select * from usuario'
+        query = 'select id_usuario,nome,cpf,email from usuario'
         columns:list[str] = []
 
         if(id_usuario):
@@ -91,6 +91,11 @@ class Usuario:
 
         return query
     
+    @staticmethod
+    def getSenhaQuery() -> str:
+        """Retorna Senha do usuario. Input: id_usuari: int"""
+        return 'select senha from usuario where id_usuario=%s'
+
     @staticmethod
     def deleteQuery() -> str:
         return 'delete from usuario where id_usuario=%s'
