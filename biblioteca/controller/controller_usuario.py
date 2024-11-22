@@ -14,11 +14,19 @@ class ControllerUsuario:
             args = []
             if(id_usuario):
                 args.append(id_usuario)
-            
+            if(nome):
+                args.append(f'%{nome}%')
+            if(cpf):
+                args.append(cpf)
+            if(email):
+                args.append(email)
+            args = tuple(args)
 
-            db.exec(Usuario.selectQuery(cpf=True), (cpf,))
+            db.exec(Usuario.selectQuery(id_usuario=id_usuario, nome=nome,cpf=cpf,email=email), args)
 
             result = db.f_all()
+            if(len(result) == 1):
+                result = result[0]
             print(result)
             if(result is None):
                 print(f'Usuário com cpf: {cpf}, não existe')
