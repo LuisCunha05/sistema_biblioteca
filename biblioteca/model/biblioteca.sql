@@ -61,3 +61,5 @@ INSERT INTO emprestimo (id_livro,id_usuario,devolvido) VALUES
 -- select * from emprestimo where id_livro=3 order by id_emprestimo desc;
 
 select count(*) from emprestimo where id_livro=2 and devolvido=false order by id_emprestimo desc;
+
+select * from usuario where nome like '%ao%';

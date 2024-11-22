@@ -79,7 +79,7 @@ class Usuario:
         if(id_usuario):
             columns.append('id_usuario=%s')
         if(nome):
-            columns.append('nome=%s')
+            columns.append('nome like %s')
         if(email):
             columns.append('email=%s')
         if(cpf):

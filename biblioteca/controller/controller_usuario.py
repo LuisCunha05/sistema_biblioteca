@@ -6,13 +6,20 @@ from ..model.config import SALT
 class ControllerUsuario:
 
     @staticmethod
-    def instanceFromDB(cpf: str) -> Usuario:
+    def instanceFromDB(id_usuario: int = None, nome: str = None, cpf: str = None, email: str = None) -> list[Usuario]:
         """Retorna um instancia de Usuario apartir do banco de dados, caso exista e None caso contrário"""
         try:
             db = DB()
+
+            args = []
+            if(id_usuario):
+                args.append(id_usuario)
+            
+
             db.exec(Usuario.selectQuery(cpf=True), (cpf,))
 
-            result = db.f_one()
+            result = db.f_all()
+            print(result)
             if(result is None):
                 print(f'Usuário com cpf: {cpf}, não existe')
                 return False
