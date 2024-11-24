@@ -114,3 +114,23 @@ class ControllerLivro:
         except Exception as e:
             print(f'Erro ao connectar ao banco de dados: {e}')
             return False
+        
+    def removerLivro(livro: Livro) -> bool:
+        try:
+            db = DB()
+
+            db.exec(livro.selectQuery(id_livro=True), (livro.getId(),))
+
+            try:
+                result = unpackValue(db.f_one())
+            except ValueError as e:
+                print('Livro não encontrado no banco de dados')
+                return False
+            
+            db.exec(livro.deleteQuery(), (livro.getId(),))
+            db.commit()
+            db.close()
+            del livro
+            return True
+        except Exception as e:
+            print(f'Erro ao remover o livro do banco de dados:\nErro:{e}')
