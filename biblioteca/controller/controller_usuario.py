@@ -6,8 +6,27 @@ from ..util import unpackValue
 
 class ControllerUsuario:
 
+    
     @staticmethod
-    def instanceFromDB(id_usuario: int = None, nome: str = None, cpf: str = None, email: str = None) -> list[Usuario]:
+    def adicionarUsuario(usuario: Usuario, senha: str) -> bool:
+        if(len(senha) == 0):
+            print('Erro ao adicionar usuário, senha inválida')
+            return False
+        
+        try:
+            db = DB()
+
+            arg = (usuario.getNome(), usuario.getCpf(), senha, usuario.getEmail())
+
+            db.exec(usuario.createQuery(), arg)
+            db.commit()
+            db.close()
+            return True
+        except Exception as e:
+            print(f'Erro ao adicionar usuário ao banco de dados:\nErro:{e}')
+    
+    @staticmethod
+    def selecionarUsuario(id_usuario: int = None, nome: str = None, cpf: str = None, email: str = None) -> list[Usuario]:
         """Retorna um instancia de Usuario apartir do banco de dados, caso exista e None caso contrário"""
         try:
             lista = []
@@ -50,37 +69,8 @@ class ControllerUsuario:
 
         except Exception as e:
             print(f'Erro ao criar instância de usuário do banco de dados:\nErro:{e}')
-    
+
     @staticmethod
-    def adicionarUsuario(nome: str, cpf: str, senha: str, email: str) -> bool:
-        try:
-            novo = (
-                UsuarioBuilder()
-                    .addNome(nome)
-                    .addCpf(cpf)
-                    .addEmail(email)
-                    .build()
-            )
-        except (ValueError, TypeError) as e:
-            print('Valores inválidos para criar um Usuário')
-            return False
-        
-        if(len(senha) == 0):
-            print('Senha inválida')
-            return False
-        
-        try:
-            db = DB()
-
-            arg = (novo.getNome(), novo.getCpf(), senha, novo.getEmail())
-
-            db.exec(novo.createQuery(), arg)
-            db.commit()
-            db.close()
-            return True
-        except Exception as e:
-            print(f'Erro ao adicionar usuário ao banco de dados:\nErro:{e}')
-
     def removerUsuario(usuario: Usuario) -> bool:
         try:
             db = DB()
@@ -101,6 +91,7 @@ class ControllerUsuario:
         except Exception as e:
             print(f'Erro ao remover o usuário do banco de dados:\nErro:{e}')
     
+    @staticmethod
     def alterarUsuario(usuario: Usuario, nome: str = None, senha: str = None, email:str = None) -> bool:
         try:
             db = DB()
@@ -136,3 +127,33 @@ class ControllerUsuario:
             return True
         except Exception as e:
             print(f'Erro ao alterar o usuário do banco de dados:\nErro:{e}')
+
+    # @staticmethod
+    # def adicionarUsuario(nome: str, cpf: str, senha: str, email: str) -> bool:
+    #     try:
+    #         novo = (
+    #             UsuarioBuilder()
+    #                 .addNome(nome)
+    #                 .addCpf(cpf)
+    #                 .addEmail(email)
+    #                 .build()
+    #         )
+    #     except (ValueError, TypeError) as e:
+    #         print('Valores inválidos para criar um Usuário')
+    #         return False
+        
+    #     if(len(senha) == 0):
+    #         print('Senha inválida')
+    #         return False
+        
+    #     try:
+    #         db = DB()
+
+    #         arg = (novo.getNome(), novo.getCpf(), senha, novo.getEmail())
+
+    #         db.exec(novo.createQuery(), arg)
+    #         db.commit()
+    #         db.close()
+    #         return True
+    #     except Exception as e:
+    #         print(f'Erro ao adicionar usuário ao banco de dados:\nErro:{e}')

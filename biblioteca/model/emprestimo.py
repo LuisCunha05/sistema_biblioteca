@@ -66,59 +66,24 @@ class Emprestimo:
                                 id_emprestimo=%s
                 """
     
-    # def __init__(self) -> None:
-    #     self._id_emprestimo: int = None
-    #     self._id_livro: int = None
-    #     self._id_usuario: int = None
-    #     self._devolvido: bool = None
-    
-    # def setId(self, id: int):
-    #     if(type(id) != int):
-    #         raise TypeError('Tipo esperado: int')
-    #     if(id <= 0):
-    #         raise ValueError('ID precisa não pode ser menor ou igual Zero')
-        
-    #     self._id_emprestimo = id
+    @staticmethod
+    def listarEmprestimo(nome_usuario: bool | None = None, nome_livro: bool | None = None) -> str:
+        """Retorna todos os emprestimos com base no Nome do usuário ou Nome do livro"""
 
-    # def setIdLivro(self, id: int):
-    #     if(type(id) != int):
-    #         raise TypeError('Tipo esperado: int')
-    #     if(id <= 0):
-    #         raise ValueError('ID precisa não pode ser menor ou igual Zero')
-        
-    #     self._id_livro = id
+        query = """select u.nome,l.titulo
+                    from emprestimo as e
+                        inner join usuario as u
+                            on e.id_usuario=u.id_usuario
+                        inner join livro as l
+                            on e.id_livro=l.id_livro
+                                where"""
 
-    # def setIdUsuario(self, id: int):
-    #     if(type(id) != int):
-    #         raise TypeError('Tipo esperado: int')
-    #     if(id <= 0):
-    #         raise ValueError('ID precisa não pode ser menor ou igual Zero')
-        
-    #     self._id_usuario = id
-    
-    # def setDevolvido(self, devolvido: bool):
-    #     if(type(devolvido) != bool):
-    #         raise TypeError('Tipo esperado: int')
-        
-    #     self._devolvido = devolvido
+        condition = []
+        if(nome_usuario is not None):
+            condition.append(' u.nome like %s ')
+        if(nome_livro is not None):
+            condition.append(' l.titulo like %s ')
 
-    # def getId(self) -> int:
-    #     return self._id_emprestimo
-    
-    # def getIdLivro(self) -> int:
-    #     return self._id_livro
-    
-    # def getIdUsuario(self) -> int:
-    #     return self._id_usuario
+        query += ' and '.join(condition)
 
-    # def getDevolvido(self) -> bool:
-    #     return self._devolvido
-
-    # def __str__(self) -> str:
-    #     return f'ID: {self.getId()}, ID Livro: {self.getIdLivro()}, ID Usuario: {self.getIdUsuario()}, Devolvido: {self.getDevolvido()}'
-    
-    # def __repr__(self) -> str:
-    #     return f'Emprestimo({self.getId()},{self.getIdLivro()},{self.getIdUsuario()},{self.getDevolvido()})'
-
-if __name__ == '__main__':
-    pass
+        return query

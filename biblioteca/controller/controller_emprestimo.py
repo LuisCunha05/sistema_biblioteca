@@ -32,7 +32,7 @@ class ControllerEmprestimo:
             db.close()
             return True
         except Exception as e:
-            print(f'Erro ao connectar ao banco de dados: {e}')
+            print(f'Erro ao fazer Emprestimo no banco de dados: {e}')
             return False
 
     @staticmethod
@@ -46,7 +46,7 @@ class ControllerEmprestimo:
             try:
                 id_emprestimo = unpackValue(db.f_one())
             except ValueError as e:
-                print(e)
+                print('Erro ao fazer Devolução, livro não emprestado')
                 return False
             
             db.exec(Emprestimo.setEmprestimoDevolvido(), (id_emprestimo,))
@@ -54,5 +54,5 @@ class ControllerEmprestimo:
             db.close()
             return True
         except Exception as e:
-            print(f'Erro ao connectar ao banco de dados: {e}')
+            print(f'Erro ao fazer Devolução no banco de dados: {e}')
             return False
