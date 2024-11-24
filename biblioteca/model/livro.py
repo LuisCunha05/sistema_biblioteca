@@ -102,11 +102,11 @@ class Livro:
         if(id_livro):
             columns.append('id_livro=%s')
         if(titulo):
-            columns.append('titulo=%s')
+            columns.append('titulo like %s')
         if(autor):
-            columns.append('autor=%s')
+            columns.append('autor like %s')
         if(genero):
-            columns.append('genero=%s')
+            columns.append('genero like %s')
         if(isbn):
             columns.append('isbn=%s')
         if(status_livro):

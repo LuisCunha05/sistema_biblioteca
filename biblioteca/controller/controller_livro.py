@@ -6,23 +6,53 @@ from ..util import unpackValue
 
 class ControllerLivro:
     @staticmethod
-    def instanceFromDB(isbn: str) -> Livro:
+    def instanceFromDB(id_livro: int = None, titulo: str = None, autor: str = None, genero: str = None, isbn: str = None, status: int = None) -> Livro:
         try:
+            lista = []
             db = DB()
+            arg = []
 
-            db.exec(Livro.selectQuery(isbn=True), (isbn,))
-            id_livro,titulo,autor,genero,status,isbn_ = db.f_one()
+            if(id_livro):
+                arg.append(id_livro)
+            if(titulo):
+                arg.append(f'%{titulo}%')
+            if(autor):
+                arg.append(f'%{autor}%')
+            if(genero):
+                arg.append(f'%{genero}%')
+            if(isbn):
+                arg.append(isbn)
+            if(status):
+                arg.append(status)
 
-            return (
-                LivroBuilder()
-                    .addId(id_livro)
-                    .addTitulo(titulo)
-                    .addAutor(autor)
-                    .addGenero(genero)
-                    .addStatus(status)
-                    .addIsbn(isbn_)
-                    .build()
-            )
+            arg = tuple(arg)
+
+            db.exec(Livro.selectQuery(id_livro=id_livro,titulo=titulo,autor=autor,genero=genero,isbn=isbn,status_livro=status), arg)
+            
+            result = db.f_all()
+            if(not len(result)):
+                print(f'Livro não existe')
+                return lista
+
+            for dado in result:
+                try:
+                    lId_livro, lTitulo, lAutor, lGenero, lStatus, lIsbn = dado
+                    lista.append((
+                        LivroBuilder()
+                            .addId(lId_livro)
+                            .addTitulo(lTitulo)
+                            .addAutor(lAutor)
+                            .addGenero(lGenero)
+                            .addStatus(lStatus)
+                            .addIsbn(lIsbn)
+                            .build()
+                        )
+                    )
+                except (ValueError, TypeError) as e:
+                    print(e)
+                    return lista
+            
+            return lista
         except Exception as e:
             print(f'Erro ao criar instância de livro através do banco de dados:\nErro:{e}')
 
@@ -96,14 +126,22 @@ class ControllerLivro:
 
             #Gerando tuple para query
             arg = []
-            if(titulo):
-                arg.append(titulo)
-            if(autor):
-                arg.append(autor)
-            if(genero):
-                arg.append(genero)
-            if(status):
-                arg.append(status)
+            try:
+                if(titulo):
+                    livro.setTitulo(titulo)
+                    arg.append(titulo)
+                if(autor):
+                    livro.setAutor(autor)
+                    arg.append(autor)
+                if(genero):
+                    livro.setGenero(genero)
+                    arg.append(genero)
+                if(status):
+                    livro.setStatus(status)
+                    arg.append(status)
+            except (ValueError, TypeError) as e:
+                print(f'Erro ao alterar livro, parametro inválido')
+
             arg.append(livro.getId())
             arg = tuple(arg)
 
