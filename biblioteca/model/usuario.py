@@ -10,7 +10,7 @@ class Usuario:
 
     def setId(self, id: int):
         if(type(id) != int):
-            raise TypeError("Tipo esperado: int")
+            raise TypeError("Tipo esperado para ID: int")
         if(id <= 0):
             raise ValueError('Id não pode ser menor ou igual a 0')
 
@@ -18,7 +18,7 @@ class Usuario:
 
     def setNome(self, nome: str):
         if(type(nome) != str):
-            raise TypeError("Tipo esperado: str")
+            raise TypeError("Tipo esperado Nome: str")
         if(nome == ''):
             raise ValueError('Nome não pode ser vazio!')
 
@@ -27,7 +27,7 @@ class Usuario:
 
     def setCpf(self, cpf: str):
         if(type(cpf) != str):
-            raise TypeError("Tipo esperado: str")
+            raise TypeError("Tipo esperado CPF: str")
         if(cpf == ''):
             raise ValueError('Cpf não pode ser vazio!')
 
@@ -43,7 +43,7 @@ class Usuario:
 
     def setEmail(self, email: str):
         if(type(email) != str):
-            raise TypeError("Tipo esperado: str")
+            raise TypeError("Tipo esperado Email: str")
         if(email == '' or email.find('@') < 0):
             raise ValueError('Email Inválido!')
 
@@ -98,6 +98,7 @@ class Usuario:
 
     @staticmethod
     def deleteQuery() -> str:
+        """Remove o usuário. Input: id_usuario: int"""
         return 'delete from usuario where id_usuario=%s'
 
     @staticmethod
@@ -124,6 +125,7 @@ class Usuario:
 
     @staticmethod
     def getIdQuery(self) -> str:
+        """Pega ID pelo cpf"""
         return 'select id_usuario from usuario where cpf=%s'
     
     @staticmethod

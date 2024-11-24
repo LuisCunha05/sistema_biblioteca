@@ -11,7 +11,7 @@ class Livro:
 
     def setId(self, id: int):
         if(type(id) != int):
-            raise TypeError('Tipo esperado: int')
+            raise TypeError('Tipo esperado ID: int')
         if(id <= 0):
             raise ValueError('ID não pode ser menor ou igual a Zero')
         
@@ -19,7 +19,7 @@ class Livro:
 
     def setTitulo(self, titulo: str):
         if(type(titulo) != str):
-            raise TypeError('Tipo esperado: str')
+            raise TypeError('Tipo esperado Título: str')
         if(titulo == ''):
             raise ValueError('Valor não pode ser vazio')
 
@@ -27,7 +27,7 @@ class Livro:
 
     def setAutor(self, autor: str):
         if(type(autor) != str):
-            raise TypeError('Tipo esperado: str')
+            raise TypeError('Tipo esperado Autor: str')
         if(autor == ''):
             raise ValueError('Valor não pode ser vazio')
 
@@ -35,7 +35,7 @@ class Livro:
 
     def setGenero(self, genero: str):
         if(type(genero) != str):
-            raise TypeError('Tipo esperado: str')
+            raise TypeError('Tipo esperado Género: str')
         if(genero == ''):
             raise ValueError('Valor não pode ser vazio')
 
@@ -43,7 +43,7 @@ class Livro:
 
     def setIsbn(self, isbn: str):
         if(type(isbn) != str):
-            raise TypeError('Tipo esperado: str')
+            raise TypeError('Tipo esperado ISBN: str')
         if(isbn == ''):
             raise ValueError('Valor não pode ser vazio')
 
@@ -52,9 +52,9 @@ class Livro:
     def setStatus(self, status: int = 1):
         """Status do livro são: 1:disponivel, 2:emprestado, 3:extraviado, 4:danificado"""
         if(type(status) != int):
-            raise TypeError('Tipo esperado: int')
+            raise TypeError('Tipo esperado Status: int')
         if(status < 1 or status > 4):
-            raise ValueError('Valor precisa ser [1,4]')
+            raise ValueError('Valores válidos são 1, 2, 3 e 4')
 
         self._status = status
 
