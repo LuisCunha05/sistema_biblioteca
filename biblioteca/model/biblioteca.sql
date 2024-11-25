@@ -63,3 +63,12 @@ INSERT INTO emprestimo (id_livro,id_usuario,devolvido) VALUES
 select count(*) from emprestimo where id_livro=2 and devolvido=false order by id_emprestimo desc;
 
 select * from usuario where nome like '%ao%';
+
+-- select u.nome,l.titulo from emprestimo as e
+-- inner join usuario as u
+--     on e.id_usuario=u.id_usuario
+-- inner join livro as l
+--     on e.id_livro=l.id_livro where
+--     u.nome like '%ira%'
+--     and
+--     l.titulo like '%ista%';

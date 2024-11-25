@@ -70,7 +70,7 @@ class Emprestimo:
     def listarEmprestimo(nome_usuario: bool | None = None, nome_livro: bool | None = None) -> str:
         """Retorna todos os emprestimos com base no Nome do usuário ou Nome do livro"""
 
-        query = """select u.nome,l.titulo
+        query = """select e.id_emprestimo,u.nome,l.titulo
                     from emprestimo as e
                         inner join usuario as u
                             on e.id_usuario=u.id_usuario
@@ -80,9 +80,9 @@ class Emprestimo:
 
         condition = []
         if(nome_usuario is not None):
-            condition.append(' u.nome like %s ')
+            condition.append(' u.nome like %s')
         if(nome_livro is not None):
-            condition.append(' l.titulo like %s ')
+            condition.append(' l.titulo like %s')
 
         query += ' and '.join(condition)
 

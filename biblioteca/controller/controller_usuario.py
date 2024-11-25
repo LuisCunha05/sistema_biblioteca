@@ -9,12 +9,19 @@ class ControllerUsuario:
     
     @staticmethod
     def adicionarUsuario(usuario: Usuario, senha: str) -> bool:
-        if(len(senha) == 0):
+        if(senha is None or len(senha) == 0):
             print('Erro ao adicionar usuário, senha inválida')
             return False
         
         try:
             db = DB()
+
+            db.exec(usuario.selectQuery(cpf=True, email=True), (usuario.getCpf(), usuario.getEmail()))
+            teste = db.f_all()
+
+            if(len(teste)):
+                print('Usuario com CPF ou Email já existente')
+                return False
 
             arg = (usuario.getNome(), usuario.getCpf(), senha, usuario.getEmail())
 
@@ -24,6 +31,7 @@ class ControllerUsuario:
             return True
         except Exception as e:
             print(f'Erro ao adicionar usuário ao banco de dados:\nErro:{e}')
+            return False
     
     @staticmethod
     def selecionarUsuario(id_usuario: int = None, nome: str = None, cpf: str = None, email: str = None) -> list[Usuario]:
@@ -69,6 +77,7 @@ class ControllerUsuario:
 
         except Exception as e:
             print(f'Erro ao criar instância de usuário do banco de dados:\nErro:{e}')
+            return False
 
     @staticmethod
     def removerUsuario(usuario: Usuario) -> bool:
@@ -90,6 +99,7 @@ class ControllerUsuario:
             return True
         except Exception as e:
             print(f'Erro ao remover o usuário do banco de dados:\nErro:{e}')
+            return False
     
     @staticmethod
     def alterarUsuario(usuario: Usuario, nome: str = None, senha: str = None, email:str = None) -> bool:
@@ -109,12 +119,22 @@ class ControllerUsuario:
                 return False
             
             arg = []
+
             if(nome):
                 usuario.setNome(nome)
                 arg.append(nome)
+            
             if(senha):
                 arg.append(senha)
+
             if(email):
+                db.exec(usuario.selectQuery(email=True), (email,))
+                try:
+                    teste = unpackValue(db.f_one())
+                    print(f'Erro ao alterar usuário, Email já registrado')
+                    return False
+                except ValueError as e:
+                    pass
                 usuario.setEmail(email)
                 arg.append(email)
             
@@ -127,6 +147,31 @@ class ControllerUsuario:
             return True
         except Exception as e:
             print(f'Erro ao alterar o usuário do banco de dados:\nErro:{e}')
+            return False
+        
+    @staticmethod
+    def verificarLogin(uEmail: str, uSenha:str) -> bool:
+        try:
+            db = DB()
+
+            db.exec(Usuario.selectQuery(email=True), (uEmail,))
+
+            usuario = db.f_one()
+            if(usuario is None):
+                return False
+            
+            id_usuario = usuario[0]
+
+            db.exec(Usuario.getSenhaQuery(), (id_usuario,))
+            senha = unpackValue(db.f_one())
+
+            if(uSenha != senha):
+                print('Erro ao verficiar login, Senha incorreta')
+            
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     # @staticmethod
     # def adicionarUsuario(nome: str, cpf: str, senha: str, email: str) -> bool:

@@ -6,7 +6,7 @@ from ..util import unpackValue
 
 class ControllerLivro:
     @staticmethod
-    def selecionarLivro(id_livro: int = None, titulo: str = None, autor: str = None, genero: str = None, isbn: str = None, status: int = None) -> Livro:
+    def selecionarLivro(id_livro: int = None, titulo: str = None, autor: str = None, genero: str = None, isbn: str = None, status: int = None) -> list[Livro]:
         try:
             lista = []
             db = DB()
@@ -54,42 +54,8 @@ class ControllerLivro:
             return lista
         except Exception as e:
             print(f'Erro ao criar instância de livro através do banco de dados:\nErro:{e}')
+            return lista
 
-    
-    # @staticmethod
-    # def adicionarLivro(titulo: str, autor: str, genero: str, isbn: str, status: int = 1) -> bool:
-    #     """Adiciona um novo livro ao banco de dados. Verifica primeiro se Isbn já existe no banco e aborta caso sim. Retorna um Bool com status de sucesso da operação de adição"""
-    #     try:
-    #         novo: Livro = (LivroBuilder()
-    #                         .addTitulo(titulo)
-    #                         .addAutor(autor)
-    #                         .addGenero(genero)
-    #                         .addStatus(status)
-    #                         .addIsbn(isbn)
-    #                         .build()
-    #                     )
-    #     except (ValueError, TypeError) as e:
-    #         print(f'Erro ao criar instância de Livro:\n{e}')
-    #         return False
-
-    #     try:
-    #         db = DB()
-    #         db.exec(novo.getIdQuery(), (novo.getIsbn(),))
-    #         try:
-    #             id_livro = unpackValue(db.f_one())
-    #             print(f'Livro com Isbn: {novo.getIsbn()}, já foi adicionado!')
-    #             return False
-    #         except ValueError:
-    #             pass
-
-    #         db.exec(query=novo.createQuery(), args=novo.getAsDB())
-    #         db.commit()
-    #         db.close()
-    #         return True
-    #     except Exception as e:
-    #         print(f'Erro ao connectar ao banco de dados: {e}')
-    #         return False
-    
     @staticmethod
     def adicionarLivro(livro: Livro) -> bool:
         """Adiciona um novo livro ao banco de dados. Verifica primeiro se Isbn ja existe no banco e aborta caso sim. Retorna um Bool com status de sucesso da operação de adição"""
@@ -172,3 +138,39 @@ class ControllerLivro:
             return True
         except Exception as e:
             print(f'Erro ao remover o livro do banco de dados:\nErro:{e}')
+            return False
+    
+    # @staticmethod
+    # def adicionarLivro(titulo: str, autor: str, genero: str, isbn: str, status: int = 1) -> bool:
+    #     """Adiciona um novo livro ao banco de dados. Verifica primeiro se Isbn já existe no banco e aborta caso sim. Retorna um Bool com status de sucesso da operação de adição"""
+    #     try:
+    #         novo: Livro = (LivroBuilder()
+    #                         .addTitulo(titulo)
+    #                         .addAutor(autor)
+    #                         .addGenero(genero)
+    #                         .addStatus(status)
+    #                         .addIsbn(isbn)
+    #                         .build()
+    #                     )
+    #     except (ValueError, TypeError) as e:
+    #         print(f'Erro ao criar instância de Livro:\n{e}')
+    #         return False
+
+    #     try:
+    #         db = DB()
+    #         db.exec(novo.getIdQuery(), (novo.getIsbn(),))
+    #         try:
+    #             id_livro = unpackValue(db.f_one())
+    #             print(f'Livro com Isbn: {novo.getIsbn()}, já foi adicionado!')
+    #             return False
+    #         except ValueError:
+    #             pass
+
+    #         db.exec(query=novo.createQuery(), args=novo.getAsDB())
+    #         db.commit()
+    #         db.close()
+    #         return True
+    #     except Exception as e:
+    #         print(f'Erro ao connectar ao banco de dados: {e}')
+    #         return False
+    

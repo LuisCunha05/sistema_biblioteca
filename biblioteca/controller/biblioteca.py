@@ -1,34 +1,40 @@
+from ..model.database import DB
+from ..util import toHash
 from ..model.livro import Livro, LivroBuilder
 from ..model.usuario import Usuario, UsuarioBuilder
+from .controller_usuario import ControllerUsuario
+from .controller_livro import ControllerLivro
+from .controller_emprestimo import ControllerEmprestimo
+
 
 __all__ = ['Biblioteca']
 
 class Biblioteca:
 
     @staticmethod
-    def cadastrar(livro: Livro) -> bool:
-        if(livro in Biblioteca.Acervo):
-            print("Livro já está cadastrado!")
+    def fazerLogin(email: str, senha: str) -> Usuario | bool:
+        if(not ControllerUsuario.verificarLogin(uEmail=email, uSenha=senha)):
             return False
-
-        Biblioteca.Acervo.append(livro)
-
-    @staticmethod
-    def listar():
-        for idx, book in enumerate(Biblioteca.Acervo):
-            print(f'Livro {idx}: {book}')
+        
+        usuario, = ControllerUsuario.selecionarUsuario(email=email)
+        return usuario
     
     @staticmethod
-    def getAtributos(index: int):
-        livro = Biblioteca.Acervo[index]
+    def fazerCadastro(nome: str, cpf:str, senha:str, email: str) -> bool:
+        try:
+            novo_usuario =  (
+                UsuarioBuilder()
+                    .addNome(nome)
+                    .addCpf(cpf)
+                    .addEmail(email)
+                    .build()
+            )
+        except (ValueError, TypeError) as e:
+            print(f'Erro ao realizar cadastro: {e}')
+            return False
+        
+        return ControllerUsuario.adicionarUsuario(novo_usuario, senha)
 
-        return f"""
-            {livro.titulo},
-            {livro.autor},
-            {livro.status},
-            {livro.codigo},
-            {livro.usuario}
-        """
     @staticmethod
     def fazerEmprestimo(usuario: Usuario, livro: Livro) -> bool:
         if(len(usuario.livros) == usuario.getMaxEmprestimo()):
