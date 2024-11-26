@@ -6,7 +6,6 @@ class Usuario:
         self._nome: str = ''
         self._cpf: str = ''
         self._email: str = ''
-        self._livros: list[str] = []
 
     def setId(self, id: int):
         if(type(id) != int):
@@ -40,7 +39,6 @@ class Usuario:
 
         self._cpf = cpf
 
-
     def setEmail(self, email: str):
         if(type(email) != str):
             raise TypeError("Tipo esperado Email: str")
@@ -62,66 +60,14 @@ class Usuario:
         return self._email
 
     @staticmethod
-    def createQuery() -> str:
-        return 'insert into usuario(nome,cpf,senha,email) values (%s,%s,%s,%s)'
-    
-    @staticmethod
-    def selectQuery(id_usuario:bool|None = False, nome:bool|None = False, email:bool|None = False,  cpf:bool|None = False) -> str:
-        """
-        Gera o query para ler o usuario, aplicando os filtros dados pelos argumentos verdadeiros no método.
-        Example:
-            select id_usuario,nome,cpf,email from usuario where id_usuario=%s and nome=%s and email=%s and cpf=%s
-        """
-
-        query = 'select id_usuario,nome,cpf,email from usuario'
-        columns:list[str] = []
-
-        if(id_usuario):
-            columns.append('id_usuario=%s')
-        if(nome):
-            columns.append('nome like %s')
-        if(email):
-            columns.append('email=%s')
-        if(cpf):
-            columns.append('cpf=%s')
-        
-
-        if(len(columns) != 0):
-            query += ' where ' + ' and '.join(columns)
-
-        return query
-    
-    @staticmethod
     def getSenhaQuery() -> str:
         """Retorna Senha do usuario. Input: id_usuari: int"""
         return 'select senha from usuario where id_usuario=%s'
-
+    
     @staticmethod
-    def deleteQuery() -> str:
-        """Remove o usuário. Input: id_usuario: int"""
-        return 'delete from usuario where id_usuario=%s'
-
-    @staticmethod
-    def updateQuery(nome: bool | None = False, senha: bool | None = False, email: bool | None = False) -> str:
-        """
-        Gera o query para alterar os dados selecionados pelos argumentos verdadeiros no método.
-        Example:
-            update usuario set nome=%s,senha=%s,email=%s where id_usuario=%s
-        """
-
-        query = 'update usuario set '
-        columns = []
-
-        if(nome):
-            columns.append('nome=%s')
-        if(senha):
-            columns.append('senha=%s')
-        if(email):
-            columns.append('email=%s')
-
-        query += ','.join(columns) + ' where id_usuario=%s'
-
-        return query
+    def getUsuarioByEmailQuery() -> str:
+        """Retorna ID do usuario. Input: email: str"""
+        return 'select id_usuario from usuario where email=%s'
 
     @staticmethod
     def getIdQuery(self) -> str:
@@ -130,6 +76,7 @@ class Usuario:
     
     @staticmethod
     def isAdministradorQuery():
+        """Retorna ID do administrador com base no ID do usuário. Input: id_usuario: int"""
         return 'select id_administrador from administrador where id_usuario=%s'
     
     def __str__(self) -> str:
