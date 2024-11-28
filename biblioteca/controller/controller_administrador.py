@@ -19,6 +19,7 @@ class ControllerAdministrador:
 
             if(len(teste)):
                 print('Usuario com CPF ou Email já existente')
+                db.close()
                 return False
 
             arg = (usuario.getNome(), usuario.getCpf(), senha, usuario.getEmail())
@@ -55,6 +56,7 @@ class ControllerAdministrador:
 
             if(not len(result)):
                 print(f'Usuário não existe')
+                db.close()
                 return lista
             
             for dado in result:
@@ -88,6 +90,7 @@ class ControllerAdministrador:
                 result = unpackValue(db.f_one())
             except ValueError as e:
                 print('Usuário não encontrado no banco de dados')
+                db.close()
                 return False
             
             db.exec(Administrador.deleteQuery(), (usuario.getId(),))
@@ -110,10 +113,12 @@ class ControllerAdministrador:
                 result = unpackValue(db.f_one())
             except ValueError as e:
                 print('Usuário não encontrado no banco de dados')
+                db.close()
                 return False
             
             if(senha and len(senha) == 0):
                 print('Senha inválida')
+                db.close()
                 return False
             
             arg = []
@@ -130,6 +135,7 @@ class ControllerAdministrador:
                 try:
                     teste = unpackValue(db.f_one())
                     print(f'Erro ao alterar usuário, Email já registrado')
+                    db.close()
                     return False
                 except ValueError as e:
                     pass

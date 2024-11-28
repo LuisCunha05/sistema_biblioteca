@@ -21,6 +21,7 @@ class ControllerUsuario:
 
             if(uSenha != senha):
                 print('Erro ao verficiar login, Senha incorreta')
+                db.close()
                 return False
             
             try:
@@ -34,6 +35,7 @@ class ControllerUsuario:
                 )
 
             except (ValueError, TypeError) as e:
+                db.close()
                 print(e)
                 return False
         except Exception as e:
@@ -49,11 +51,32 @@ class ControllerUsuario:
 
             try:
                 usuario = unpackValue(db.f_one())
+                db.close()
                 return True
             except ValueError as e:
                 print('Usuário não é administrador')
+                db.close()
                 return False
             
+        except Exception as e:
+            print(e)
+            return False
+    
+    @staticmethod
+    def verificarSeUsuarioExiste(cpf: str) -> bool:
+        try:
+            db = DB()
+
+            db.exec(Usuario.getIdQuery(), (cpf,))
+
+            try:
+                usuario = unpackValue(db.f_one())
+                db.close()
+                return True
+            except ValueError as e:
+                print('Usuário não existe')
+                db.close()
+                return False
         except Exception as e:
             print(e)
             return False

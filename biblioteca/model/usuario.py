@@ -79,6 +79,11 @@ class Usuario:
         """Retorna ID do administrador com base no ID do usuário. Input: id_usuario: int"""
         return 'select id_administrador from administrador where id_usuario=%s'
     
+    # @staticmethod
+    # def usuarioExists() -> str:
+    #     """Retorna ID do usuário. Input: id_usuario: int"""
+    #     return 'select id_usuario from usuario where id_usuario=%s'
+    
     def __str__(self) -> str:
         return f'ID: {self.getId()}, Nome: {self.getNome()}, Cpf: {self.getCpf()}, Email: {self.getEmail()}'
     

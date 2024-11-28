@@ -21,6 +21,7 @@ class ControllerEmprestimo:
             try:
                 result = unpackValue(db.f_one())
                 print('Livro já está emprestado')
+                db.close()
                 return False
             except ValueError:
                 pass
@@ -29,6 +30,7 @@ class ControllerEmprestimo:
             try:
                 result = unpackValue(db.f_one())
                 print('Usuário já possui o livro emprestado')
+                db.close()
                 return False
             except ValueError:
                 pass
@@ -37,6 +39,7 @@ class ControllerEmprestimo:
             emprestimos = db.f_all()
             if(len(emprestimos) == ControllerEmprestimo.getMaxEmprestimos()):
                 print('Usuário já possui o Máximo de livros emprestados')
+                db.close()
                 return False
 
             db.exec(Emprestimo.adicionarEmprestimo(), (livro.getId(), usuario.getId()))
@@ -59,6 +62,7 @@ class ControllerEmprestimo:
                 id_emprestimo = unpackValue(db.f_one())
             except ValueError as e:
                 print('Erro ao fazer Devolução, livro não emprestado')
+                db.close()
                 return False
             
             db.exec(Emprestimo.setEmprestimoDevolvido(), (id_emprestimo,))
@@ -90,11 +94,13 @@ class ControllerEmprestimo:
 
             if(result is not None and len(result) == 0):
                 print('Nenhum emprestimo encontrado')
+                db.close()
                 return lista
             
             for dado in result:
                 lista.append({'id':dado[0],'nome_usuario':dado[1],'nome_livro':dado[2]})
             
+            db.close()
             return lista
         except Exception as e:
             print(f'Erro ao listar emprestimos do banco de dados:\n{e}')

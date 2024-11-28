@@ -39,30 +39,26 @@ class Biblioteca:
 
     @staticmethod
     def fazerEmprestimo(usuario: Usuario, livro: Livro) -> bool:
-        
-        ControllerEmprestimo.fazerEmprestimo(livro=livro, usuario=usuario)
 
-        print('O usuário já atingiu o maximo de emprestimos')
-        return False
-        
-        if(livro.status != 'Disponivel'):
-            print('O livro não pode ser emprestado!')
+        if(not ControllerUsuario.verificarSeUsuarioExiste(usuario.getCpf())):
+            return False
+
+        if(not ControllerLivro.verificarLivroExiste(livro.getIsbn(),)):
             return False
         
-        usuario.adicionarLivro(livro.titulo)
-        livro.emprestarLivro(usuario)
+        return ControllerEmprestimo.fazerEmprestimo(livro=livro, usuario=usuario)
+
     @staticmethod
     def fazerDevolucao(usuario: Usuario, livro: Livro) -> bool:
-        if(len(usuario.livros) == 0):
-            print('O usuário não possui livros para devolver')
+
+        if(not ControllerUsuario.verificarSeUsuarioExiste(usuario.getCpf())):
+            return False
+
+        if(not ControllerLivro.verificarLivroExiste(livro.getIsbn(),)):
             return False
         
-        if(livro.status != 'Emprestado'):
-            print('O livro não está emprestado!')
-            return False
-        
-        usuario.adicionarLivro(livro)
-        livro.devolverLivro()
+        ControllerEmprestimo.fazerDevolucao(livro)
+    
 
 if __name__ == "__main__":
     teste = (LivroBuilder()

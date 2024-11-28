@@ -67,6 +67,7 @@ class ControllerLivro:
             try:
                 id_livro = unpackValue(db.f_one())
                 print(f'Livro com Isbn: {livro.getIsbn()}, já foi adicionado!')
+                db.close()
                 return False
             except ValueError:
                 pass
@@ -88,6 +89,7 @@ class ControllerLivro:
                 id_livro = unpackValue(db.f_one())
             except ValueError:
                 print(f'Livro com Isbn: {livro.getIsbn()}, não foi encontrado!')
+                db.close()
                 return False
 
             #Gerando tuple para query
@@ -118,7 +120,8 @@ class ControllerLivro:
         except Exception as e:
             print(f'Erro ao connectar ao banco de dados: {e}')
             return False
-        
+    
+    @staticmethod
     def removerLivro(livro: Livro) -> bool:
         try:
             db = DB()
@@ -129,6 +132,7 @@ class ControllerLivro:
                 result = unpackValue(db.f_one())
             except ValueError as e:
                 print('Livro não encontrado no banco de dados')
+                db.close()
                 return False
             
             db.exec(livro.deleteQuery(), (livro.getId(),))
@@ -139,38 +143,22 @@ class ControllerLivro:
         except Exception as e:
             print(f'Erro ao remover o livro do banco de dados:\nErro:{e}')
             return False
-    
-    # @staticmethod
-    # def adicionarLivro(titulo: str, autor: str, genero: str, isbn: str, status: int = 1) -> bool:
-    #     """Adiciona um novo livro ao banco de dados. Verifica primeiro se Isbn já existe no banco e aborta caso sim. Retorna um Bool com status de sucesso da operação de adição"""
-    #     try:
-    #         novo: Livro = (LivroBuilder()
-    #                         .addTitulo(titulo)
-    #                         .addAutor(autor)
-    #                         .addGenero(genero)
-    #                         .addStatus(status)
-    #                         .addIsbn(isbn)
-    #                         .build()
-    #                     )
-    #     except (ValueError, TypeError) as e:
-    #         print(f'Erro ao criar instância de Livro:\n{e}')
-    #         return False
+        
+    @staticmethod
+    def verificarLivroExiste(isbn: str) -> bool:
+        try:
+            db = DB()
 
-    #     try:
-    #         db = DB()
-    #         db.exec(novo.getIdQuery(), (novo.getIsbn(),))
-    #         try:
-    #             id_livro = unpackValue(db.f_one())
-    #             print(f'Livro com Isbn: {novo.getIsbn()}, já foi adicionado!')
-    #             return False
-    #         except ValueError:
-    #             pass
+            db.exec(Livro.getIdQuery(), (isbn,))
 
-    #         db.exec(query=novo.createQuery(), args=novo.getAsDB())
-    #         db.commit()
-    #         db.close()
-    #         return True
-    #     except Exception as e:
-    #         print(f'Erro ao connectar ao banco de dados: {e}')
-    #         return False
-    
+            try:
+                result = unpackValue(db.f_one())
+                db.close()
+                return True
+            except ValueError as e:
+                print('Livro não encontrado no banco de dados')
+                db.close()
+                return False
+        except Exception as e:
+            print(f'Erro ao remover o livro do banco de dados:\nErro:{e}')
+            return False
