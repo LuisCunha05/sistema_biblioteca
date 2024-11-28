@@ -1,10 +1,12 @@
 from ..model.database import DB
-from ..util import toHash
 from ..model.livro import Livro, LivroBuilder
 from ..model.usuario import Usuario, UsuarioBuilder
+from ..model.administrador import Administrador, AdministradorBuilder
 from .controller_usuario import ControllerUsuario
 from .controller_livro import ControllerLivro
 from .controller_emprestimo import ControllerEmprestimo
+from .controller_administrador import ControllerAdministrador
+from .controller_emprestimo import ControllerEmprestimo, Emprestimo
 
 
 __all__ = ['Biblioteca']
@@ -13,10 +15,10 @@ class Biblioteca:
 
     @staticmethod
     def fazerLogin(email: str, senha: str) -> Usuario | bool:
-        if(not ControllerUsuario.verificarLogin(uEmail=email, uSenha=senha)):
+        usuario = ControllerUsuario.verificarLogin(uEmail=email, uSenha=senha)
+        if(not usuario):
             return False
         
-        usuario, = ControllerUsuario.selecionarUsuario(email=email)
         return usuario
     
     @staticmethod
@@ -33,13 +35,15 @@ class Biblioteca:
             print(f'Erro ao realizar cadastro: {e}')
             return False
         
-        return ControllerUsuario.adicionarUsuario(novo_usuario, senha)
+        return ControllerAdministrador.adicionarUsuario(novo_usuario, senha)
 
     @staticmethod
     def fazerEmprestimo(usuario: Usuario, livro: Livro) -> bool:
-        if(len(usuario.livros) == usuario.getMaxEmprestimo()):
-            print('O usuário já atingiu o maximo de emprestimos')
-            return False
+        
+        ControllerEmprestimo.fazerEmprestimo(livro=livro, usuario=usuario)
+
+        print('O usuário já atingiu o maximo de emprestimos')
+        return False
         
         if(livro.status != 'Disponivel'):
             print('O livro não pode ser emprestado!')

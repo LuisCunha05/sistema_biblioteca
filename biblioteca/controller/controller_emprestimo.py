@@ -5,6 +5,12 @@ from ..model.emprestimo import Emprestimo
 from ..util import unpackValue
 
 class ControllerEmprestimo:
+    __MAX_EMPRESTIMOS: int = 3
+
+    @staticmethod
+    def getMaxEmprestimos():
+        return ControllerEmprestimo.__MAX_EMPRESTIMOS
+
     @staticmethod
     def fazerEmprestimo(livro: Livro, usuario: Usuario) -> bool:
         """Adiciona um novo emprestimo ao banco, valida tanto livro e usuário e retorna false caso não seja possivel"""
@@ -26,6 +32,12 @@ class ControllerEmprestimo:
                 return False
             except ValueError:
                 pass
+
+            db.exec(Emprestimo.usuarioHasAnyLivroEmprestado(), (usuario.getId(),))
+            emprestimos = db.f_all()
+            if(len(emprestimos) == ControllerEmprestimo.getMaxEmprestimos()):
+                print('Usuário já possui o Máximo de livros emprestados')
+                return False
 
             db.exec(Emprestimo.adicionarEmprestimo(), (livro.getId(), usuario.getId()))
             db.commit()

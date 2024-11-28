@@ -66,8 +66,8 @@ class Usuario:
     
     @staticmethod
     def getUsuarioByEmailQuery() -> str:
-        """Retorna ID do usuario. Input: email: str"""
-        return 'select id_usuario from usuario where email=%s'
+        """Retorna todos os dados do usuario. Input: email: str"""
+        return 'select * from usuario where email=%s'
 
     @staticmethod
     def getIdQuery(self) -> str:

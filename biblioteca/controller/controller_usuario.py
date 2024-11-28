@@ -1,12 +1,13 @@
 __all__ = ['ControllerUsuario']
 from ..model.database import DB
-from ..model.usuario import Usuario
+from ..model.usuario import Usuario, UsuarioBuilder
 from ..util import unpackValue
 
 class ControllerUsuario:
 
     @staticmethod
-    def verificarLogin(uEmail: str, uSenha:str) -> bool:
+    def verificarLogin(uEmail: str, uSenha:str) -> Usuario | bool:
+        """Retorna uma instância do Usuário, caso login seja válido, false caso não"""
         try:
             db = DB()
 
@@ -16,15 +17,25 @@ class ControllerUsuario:
             if(usuario is None):
                 return False
             
-            id_usuario = usuario[0]
-
-            db.exec(Usuario.getSenhaQuery(), (id_usuario,))
-            senha = unpackValue(db.f_one())
+            id_usuario, nome, cpf, senha, email = usuario
 
             if(uSenha != senha):
                 print('Erro ao verficiar login, Senha incorreta')
+                return False
             
-            return True
+            try:
+                return (
+                    UsuarioBuilder()
+                        .addId(id_usuario)
+                        .addNome(nome)
+                        .addCpf(cpf)
+                        .addEmail(email)
+                        .build()
+                )
+
+            except (ValueError, TypeError) as e:
+                print(e)
+                return False
         except Exception as e:
             print(e)
             return False
