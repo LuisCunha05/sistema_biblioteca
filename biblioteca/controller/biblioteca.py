@@ -46,7 +46,11 @@ class Biblioteca:
         if(not ControllerLivro.verificarLivroExiste(livro.getIsbn(),)):
             return False
         
-        return ControllerEmprestimo.fazerEmprestimo(livro=livro, usuario=usuario)
+        if(not ControllerEmprestimo.fazerEmprestimo(livro=livro, usuario=usuario)):
+            return False
+        
+        ControllerLivro.alterarLivro(status=2)
+        return True
 
     @staticmethod
     def fazerDevolucao(usuario: Usuario, livro: Livro) -> bool:
@@ -57,7 +61,11 @@ class Biblioteca:
         if(not ControllerLivro.verificarLivroExiste(livro.getIsbn(),)):
             return False
         
+        if(not ControllerLivro.alterarLivro(status=1)):
+            return False
+        
         ControllerEmprestimo.fazerDevolucao(livro)
+        return True
     
 
 if __name__ == "__main__":
