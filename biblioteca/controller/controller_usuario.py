@@ -15,6 +15,8 @@ class ControllerUsuario:
 
             usuario = db.f_one()
             if(usuario is None):
+                print('Erro ao verficiar login, Usuário não existe')
+                db.close()
                 return False
             
             id_usuario, nome, cpf, senha, email = usuario

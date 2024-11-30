@@ -71,3 +71,6 @@ class AdministradorBuilder(UsuarioBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._usuario = Administrador()
+
+    def build(self) -> Administrador:
+        return super().build()

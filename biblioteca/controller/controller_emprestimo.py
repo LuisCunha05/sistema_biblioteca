@@ -74,22 +74,22 @@ class ControllerEmprestimo:
             return False
         
     @staticmethod
-    def listarEmprestimo(nome_usuario: str = None, nome_livro: str = None) -> list[dict[str,str | int]]:
-        """Retorna uma lista contendo os emprestimos dado os inputs. Formato: {id_emprestimo:int,nome_usuario:str,nome_livro:str}"""
-        lista: list[dict[str,str | int]] = []
+    def listarEmprestimo(uNome_usuario: str = None, uTitulo_livro: str = None) -> list[Emprestimo]:
+        """Retorna uma lista contendo os emprestimos com base nos filtros. """
+        lista: list[Emprestimo] = []
 
         try:
             db = DB()
 
             arg = []
-            if(nome_usuario):
-                arg.append(f'%{nome_usuario}%')
-            if(nome_livro):
-                arg.append(f'%{nome_livro}%')
+            if(uNome_usuario):
+                arg.append(f'%{uNome_usuario}%')
+            if(uTitulo_livro):
+                arg.append(f'%{uTitulo_livro}%')
 
             arg = tuple(arg)
 
-            db.exec(Emprestimo.listarEmprestimo(nome_usuario=nome_usuario, nome_livro=nome_livro), arg)
+            db.exec(Emprestimo.listarEmprestimo(nome_usuario=uNome_usuario, nome_livro=uTitulo_livro), arg)
             result = db.f_all()
 
             if(result is not None and len(result) == 0):
@@ -98,7 +98,34 @@ class ControllerEmprestimo:
                 return lista
             
             for dado in result:
-                lista.append({'id':dado[0],'nome_usuario':dado[1],'nome_livro':dado[2]})
+                id_emprestimo,id_usuario,nome_usuario,id_livro,titulo_livro = dado 
+                lista.append(Emprestimo(id_emprestimo, id_usuario, nome_usuario, id_livro, titulo_livro))
+            
+            db.close()
+            return lista
+        except Exception as e:
+            print(f'Erro ao listar emprestimos do banco de dados:\n{e}')
+            return lista
+    
+    @staticmethod
+    def listarTodosEmprestimos() -> list[Emprestimo]:
+        """Retorna uma lista contendo todos os emprestimos."""
+        lista: list[Emprestimo] = []
+
+        try:
+            db = DB()
+
+            db.exec(Emprestimo.listarTodosEmprestimos())
+            result = db.f_all()
+
+            if(result is not None and len(result) == 0):
+                print('Nenhum emprestimo encontrado')
+                db.close()
+                return lista
+            
+            for dado in result:
+                id_emprestimo,id_usuario,nome_usuario,id_livro,titulo_livro = dado 
+                lista.append(Emprestimo(id_emprestimo, id_usuario, nome_usuario, id_livro, titulo_livro))
             
             db.close()
             return lista

@@ -72,3 +72,10 @@ select * from usuario where nome like '%ao%';
 --     u.nome like '%ira%'
 --     and
 --     l.titulo like '%ista%';
+
+-- select e.id_emprestimo,u.id_usuario,u.nome,l.id_livro,l.titulo
+--                     from emprestimo as e
+--                         inner join usuario as u
+--                             on e.id_usuario=u.id_usuario
+--                         inner join livro as l
+--                             on e.id_livro=l.id_livro;

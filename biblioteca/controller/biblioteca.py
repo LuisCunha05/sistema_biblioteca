@@ -14,10 +14,22 @@ __all__ = ['Biblioteca']
 class Biblioteca:
 
     @staticmethod
-    def fazerLogin(email: str, senha: str) -> Usuario | bool:
+    def fazerLogin(email: str, senha: str) -> Usuario | Administrador | bool:
+        """Tenta realiazar o login e retorna um instância de Usuário ou Administrador"""
         usuario = ControllerUsuario.verificarLogin(uEmail=email, uSenha=senha)
         if(not usuario):
             return False
+        
+        if(ControllerUsuario.verificarAdministrador(usuario.getId())):
+            usuario = (
+                AdministradorBuilder()
+                .addId(usuario.getId())
+                .addNome(usuario.getNome())
+                .addCpf(usuario.getCpf())
+                .addEmail(usuario.getEmail())
+                .build()
+            )
+            print('Logado como Administrador!')
         
         return usuario
     
@@ -49,8 +61,7 @@ class Biblioteca:
         if(not ControllerEmprestimo.fazerEmprestimo(livro=livro, usuario=usuario)):
             return False
         
-        ControllerLivro.alterarLivro(status=2)
-        return True
+        return ControllerLivro.alterarLivro(status=2)
 
     @staticmethod
     def fazerDevolucao(usuario: Usuario, livro: Livro) -> bool:
@@ -63,20 +74,20 @@ class Biblioteca:
         
         if(not ControllerLivro.alterarLivro(status=1)):
             return False
-        
-        ControllerEmprestimo.fazerDevolucao(livro)
-        return True
+
+        return ControllerEmprestimo.fazerDevolucao(livro)
     
+    @staticmethod
+    def listarEmprestimo(uNome_usuario: str = None, uTitulo_livro: str = None) -> list[Emprestimo]:
+        lista: list[Emprestimo] = None
+
+        if(uNome_usuario or uTitulo_livro):
+            lista = ControllerEmprestimo.listarEmprestimo(uNome_usuario, uTitulo_livro)
+        else:
+            lista = ControllerEmprestimo.listarTodosEmprestimos()
+
+        return lista
+
 
 if __name__ == "__main__":
-    teste = (LivroBuilder()
-                .addId(7)
-                .addTitulo('test1')
-                .addAutor('test2')
-                .addGenero('test3')
-                .addIsbn('007')
-                .addStatus()
-                .build()
-            )
-
-    print(teste)
+    pass
