@@ -1,84 +1,32 @@
 from ..model.database import DB
 from ..model.usuario import Usuario, UsuarioBuilder
+from ..controller.controller_usuario import ControllerUsuario
 from ..model.administrador import Administrador, AdministradorBuilder
 from ..util import unpackValue
 
-class ControllerAdministrador:
-
+class ControllerAdministrador(ControllerUsuario):
     @staticmethod
-    def adicionarUsuario(usuario: Usuario, senha: str) -> bool:
-        if(senha is None or len(senha) == 0):
-            print('Erro ao adicionar usuário, senha inválida')
-            return False
-        
+    def adicionarAdministrador(id_usuario: str) -> bool:
         try:
             db = DB()
 
-            db.exec(Administrador.selectQuery(cpf=True, email=True), (usuario.getCpf(), usuario.getEmail()))
-            teste = db.f_all()
+            db.exec(Administrador.isAdministradorQuery(), (id_usuario,))
 
-            if(len(teste)):
-                print('Usuario com CPF ou Email já existente')
+            try:
+                result = unpackValue(db.f_one())
+            except ValueError as e:
+                print('Usuário já é um administrador')
                 db.close()
                 return False
 
-            arg = (usuario.getNome(), usuario.getCpf(), senha, usuario.getEmail())
-
-            db.exec(Administrador.createQuery(), arg)
+            db.exec(Administrador.createAdministradorQuery(), (id_usuario,))
             db.commit()
             db.close()
             return True
         except Exception as e:
-            print(f'Erro ao adicionar usuário ao banco de dados:\nErro:{e}')
+            print(f'Erro ao adicionar novo administrador no banco de dados:\nErro:{e}')
             return False
-    
-    @staticmethod
-    def selecionarUsuario(id_usuario: int = None, nome: str = None, cpf: str = None, email: str = None) -> list[Usuario]:
-        """Retorna um instancia de Usuario apartir do banco de dados, caso exista e None caso contrário"""
-        try:
-            lista = []
-            db = DB()
 
-            args = []
-            if(id_usuario):
-                args.append(id_usuario)
-            if(nome):
-                args.append(f'%{nome}%')
-            if(cpf):
-                args.append(cpf)
-            if(email):
-                args.append(email)
-            args = tuple(args)
-
-            db.exec(Administrador.selectQuery(id_usuario=id_usuario, nome=nome,cpf=cpf,email=email), args)
-
-            result = db.f_all()
-
-            if(not len(result)):
-                print(f'Usuário não existe')
-                db.close()
-                return lista
-            
-            for dado in result:
-                try:
-                    uId, uNome, uCpf, uEmail = dado
-                    lista.append((
-                        UsuarioBuilder()
-                            .addId(uId)
-                            .addNome(uNome)
-                            .addCpf(uCpf)
-                            .addEmail(uEmail)
-                            .build()
-                    ))
-                except (ValueError, TypeError) as e:
-                    print(e)
-            
-            return lista
-
-        except Exception as e:
-            print(f'Erro ao criar instância de usuário do banco de dados:\nErro:{e}')
-            return False
-    
     @staticmethod
     def removerUsuario(usuario: Usuario) -> bool:
         try:

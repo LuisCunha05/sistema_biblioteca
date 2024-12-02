@@ -47,7 +47,7 @@ class Biblioteca:
             print(f'Erro ao realizar cadastro: {e}')
             return False
         
-        return ControllerAdministrador.adicionarUsuario(novo_usuario, senha)
+        return ControllerUsuario.adicionarUsuario(novo_usuario, senha)
 
     @staticmethod
     def fazerEmprestimo(usuario: Usuario, livro: Livro) -> bool:
