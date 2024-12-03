@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import QWidget, QApplication, QPushButton, QStackedWidget
 from biblioteca.view.login import Login
 from biblioteca.view.inicio import Inicio
 from biblioteca.view.gerenciar_livro import GerenciarLivro
+from biblioteca.view.cadastrar_livro import CadastroLivro
 
 class MainWindown(QStackedWidget):
     def __init__(self) -> None:
@@ -33,10 +34,18 @@ class MainWindown(QStackedWidget):
     def showGerenciarLivro(self):
         if(not hasattr(self, 'tela_gerenciar_livro')):
             self.tela_gerenciar_livro = GerenciarLivro()
-            self.tela_gerenciar_livro.b_inicio.clicked.connect(self.showLogin)
+            self.tela_gerenciar_livro.b_inicio.clicked.connect(self.showInicio)
             self.addWidget(self.tela_gerenciar_livro)
         
         self.setCurrentWidget(self.tela_gerenciar_livro)
+    
+    def showCadastrarLivro(self):
+        if(not hasattr(self, 'tela_cadastrar_livro')):
+            self.tela_cadastrar_livro = CadastroLivro()
+            self.tela_cadastrar_livro.b_inicio.clicked.connect(self.showInicio)
+            self.addWidget(self.tela_cadastrar_livro)
+        
+        self.setCurrentWidget(self.tela_cadastrar_livro)
 
 class App(QApplication):
     def __init__(self, argv: List[str]) -> None:
