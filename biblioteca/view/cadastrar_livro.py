@@ -6,9 +6,8 @@ from ..util import basePath
 
 
 class CadastroLivro(QWidget):
-    def __init__(self, parent: QWidget = None) -> None:
-        super().__init__(parent=parent)
+    def __init__(self) -> None:
+        super().__init__()
 
         loadUi(basePath('biblioteca\\view\\layouts\\cadastro_livro.ui'), self)
         self.b_inicio:QPushButton
-        self.b_inicio.setText('Opa')

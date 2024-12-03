@@ -5,12 +5,13 @@ from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QPushButton, QVBox
 from ..util import basePath
 
 
-class Login(QMainWindow):
+class Login(QWidget):
     def __init__(self) -> None:
         super().__init__()
+
+        loadUi(basePath('biblioteca\\view\\layouts\\login.ui'), self)
         self.b_entrar:QPushButton
 
-        loadUi(basePath('biblioteca\\view\\layouts\\login.ui') ,self)
 
 
 
@@ -18,7 +19,6 @@ class Login(QMainWindow):
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
-
 
     tela = Login()
     tela.show()
