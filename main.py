@@ -9,6 +9,8 @@ from biblioteca.view.login import Login
 from biblioteca.view.inicio import Inicio
 from biblioteca.view.gerenciar_livro import GerenciarLivro
 from biblioteca.view.cadastrar_livro import CadastroLivro
+from biblioteca.view.cadastrar_usuario import CadastrarUsuario
+
 
 class MainWindown(QStackedWidget):
     def __init__(self) -> None:
@@ -19,6 +21,7 @@ class MainWindown(QStackedWidget):
         if(not hasattr(self, 'tela_login')):
             self.tela_login = Login()
             self.tela_login.b_entrar.clicked.connect(self.showGerenciarLivro)
+            self.tela_login.b_cadastrar.clicked.connect(lambda x: self.showCadastrarUsuario(False))
             self.addWidget(self.tela_login)
         
         self.setCurrentWidget(self.tela_login)
@@ -35,6 +38,7 @@ class MainWindown(QStackedWidget):
         if(not hasattr(self, 'tela_gerenciar_livro')):
             self.tela_gerenciar_livro = GerenciarLivro()
             self.tela_gerenciar_livro.b_inicio.clicked.connect(self.showInicio)
+            self.tela_gerenciar_livro.b_cadastrar.clicked.connect(self.showCadastrarLivro)
             self.addWidget(self.tela_gerenciar_livro)
         
         self.setCurrentWidget(self.tela_gerenciar_livro)
@@ -46,6 +50,20 @@ class MainWindown(QStackedWidget):
             self.addWidget(self.tela_cadastrar_livro)
         
         self.setCurrentWidget(self.tela_cadastrar_livro)
+
+    def showCadastrarUsuario(self, isAdmin: bool):
+        if(not hasattr(self, 'tela_cadastrar_usuario')):
+            self.tela_cadastrar_usuario = CadastrarUsuario()
+            self.tela_cadastrar_usuario.b_inicio.clicked.connect(self.showInicio)
+            self.addWidget(self.tela_cadastrar_usuario)
+        
+        self.setCurrentWidget(self.tela_cadastrar_usuario)
+
+        if(isAdmin):
+            self.tela_cadastrar_usuario.showAdminOption()
+        else:
+            self.tela_cadastrar_usuario.hideAdminOption()
+        self.tela_cadastrar_usuario.hideInicioOption()
 
 class App(QApplication):
     def __init__(self, argv: List[str]) -> None:

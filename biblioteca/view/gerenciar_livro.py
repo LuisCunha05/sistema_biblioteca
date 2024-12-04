@@ -21,7 +21,7 @@ class GerenciarLivro(QWidget):
         self.table_livro.setColumnWidth(2, 180)
         self.table_livro.setColumnWidth(3, 100)
         self.table_livro.setColumnWidth(4, 100)
-        self.b_alterar.clicked.connect(lambda x: self.adicionarLinha((1,'a','b','c',3, 'd')))
+        #self.b_alterar.clicked.connect(lambda x: self.adicionarLinha((1,'a','b','c',3, 'd')))
 
     def adicionarLinha(self, data: tuple[int,str,str,str,int,str]):
         """
